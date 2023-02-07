@@ -1,7 +1,7 @@
 import { Router } from "express";
+import { apiRoutes } from "./api";
 
 const router = Router();
-
-// TODO: define routes
+router.use(apiRoutes);
 
 export { router as routes };
