@@ -1,22 +1,40 @@
-// Thought:
+import { Schema, model } from "mongoose";
+import { reactionSchema } from "./Reaction";
 
-  // thoughtText
-    // String
-    // Required
-    // Must be between 1 and 280 characters
+interface IThought {
+  username: string;
+  thought_text: string;
+  created_at: Date;
+  reactions: [typeof reactionSchema];
+}
 
-  // createdAt
-    // Date
-    // Set default value to the current timestamp
-    // Use a getter method to format the timestamp on query
+const thoughtSchema = new Schema<IThought>(
+  {
+    username: {
+      type: String,
+      required: true,
+    },
+    thought_text: {
+      type: String,
+      required: true,
+      trim: true,
+      // TODO: Must be between 1 and 280 characters
+    },
+    created_at: {
+      type: Date,
+      default: Date.now,
+      // TODO: Use a getter method to format the timestamp on query
+    },
+    reactions: [reactionSchema],
+  },
+  {
+    id: false,
+    versionKey: false,
+    toJSON: {
+      virtuals: true,
+      getters: true,
+    },
+  }
+);
 
-  // username (The user that created this thought)
-    // String
-    // Required
-
-  // reactions (These are like replies)
-    // Array of nested documents created with the reactionSchema
-
-  // Schema Settings:
-    // Create a virtual called reactionCount that retrieves the length of the thought's reactions array field on query.
-
+export const Thought = model<IThought>("Thought", thoughtSchema);
