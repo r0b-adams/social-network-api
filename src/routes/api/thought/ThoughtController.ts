@@ -1,50 +1,79 @@
 import { Thought } from '../../../models';
+import { User } from '../../../models';
 
 class ThoughtController {
-  thought: typeof Thought;
+  private user;
+  private thought;
 
-  constructor(thought_model: typeof Thought) {
+  constructor(user_model: typeof User, thought_model: typeof Thought) {
+    this.user = user_model;
     this.thought = thought_model;
   }
 
   async getAllThoughts() {
-    const response = 'GET all thoughts';
-    return response;
+    return await this.thought.find().populate('reactions');
   }
 
   async getOneThought(_id: string) {
-    const response = `GET thought with id: ${_id}`;
-    return response;
+    return await this.thought.findById(_id);
   }
 
   async createThought(user_id: string, username: string, thought_text: string) {
-    const response = `create thought with data: ${JSON.stringify({
+    const thought = await this.thought.create({ user_id, username, thought_text });
+
+    // push created thought id to user's thoughts
+    const user = await this.user.findByIdAndUpdate(
       user_id,
-      username,
-      thought_text,
-    })}`;
-    return response;
+      {
+        $addToSet: { thoughts: thought._id },
+      },
+      { new: true },
+    );
+
+    return { thought, user };
   }
 
-  async updateThought(_id: string, thought_text: string) {
-    const response = `PUT update thought with id: ${_id} with text: ${thought_text}`;
-    return response;
+  async updateThought(_id: string, update: { thought_text: string }) {
+    return await this.thought.findByIdAndUpdate(_id, update, { new: true });
   }
 
   async deleteThought(_id: string) {
-    const response = `DELETE thought with id: ${_id}`;
-    return response;
+    let update = null;
+    const thought = await this.thought.findByIdAndDelete(_id);
+
+    if (thought) {
+      // remove thought id from user's thoughts
+      update = await this.user.updateOne(
+        { username: thought.username },
+        {
+          $pull: { thoughts: thought._id },
+        },
+        { new: true },
+      );
+    }
+
+    return { thought, update };
   }
 
-  async addReaction(thought_id: string, username: string, reaction_body: string) {
-    const response = `add reaction ${reaction_body} from ${username} to thought ${thought_id}`;
-    return response;
+  async addReaction(thought_id: string, reaction: { username: string; reaction_body: string }) {
+    return await this.thought.findByIdAndUpdate(
+      thought_id,
+      {
+        $push: { reactions: reaction },
+      },
+      { new: true },
+    );
   }
 
   async removeReaction(thought_id: string, reaction_id: string) {
-    const response = `remove reaction ${reaction_id} from thought ${thought_id}`;
-    return response;
+    return await this.thought.findByIdAndUpdate(
+      thought_id,
+      {
+        $pull: { reactions: { _id: reaction_id } },
+      },
+      { new: true },
+    );
   }
 }
 
-export default new ThoughtController(Thought);
+export default new ThoughtController(User, Thought);
