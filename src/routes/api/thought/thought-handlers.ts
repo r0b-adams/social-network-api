@@ -10,9 +10,10 @@ export const getAllThoughts: RequestHandler = async (_req, res, next) => {
   }
 };
 
-export const getOneThought: RequestHandler = async (_req, res, next) => {
+export const getOneThought: RequestHandler = async (req, res, next) => {
   try {
-    const thought = await thoughtController.getOneThought();
+    const { _id } = req.params;
+    const thought = await thoughtController.getOneThought(_id);
     res.json(thought);
   } catch (error) {
     next(error);
@@ -21,6 +22,22 @@ export const getOneThought: RequestHandler = async (_req, res, next) => {
 
 // POST to create a new thought
 // (don't forget to push the created thought's _id to the associated user's thoughts array field)
+interface INewThought {
+  user_id: string;
+  username: string;
+  thought_text: string;
+}
+
+export const createThought: RequestHandler = async (req, res, next) => {
+  try {
+    const { _id } = req.params;
+    const { user_id, username, thought_text } = req.body as INewThought;
+    const thought = await thoughtController.createThought(user_id, username, thought_text);
+    res.json(thought);
+  } catch (error) {
+    next(error);
+  }
+};
 
 // PUT to update a thought by its _id
 
