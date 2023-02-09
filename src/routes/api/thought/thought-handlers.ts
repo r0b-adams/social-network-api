@@ -1,16 +1,23 @@
 import { RequestHandler } from 'express';
 import thoughtController from './ThoughtController';
 
-// GET to get all thoughts
 export const getAllThoughts: RequestHandler = async (_req, res, next) => {
   try {
-    const users = await thoughtController.getAllThoughts();
-    res.json(users);
+    const thoughts = await thoughtController.getAllThoughts();
+    res.json(thoughts);
   } catch (error) {
     next(error);
   }
 };
-// GET to get a single thought by its _id
+
+export const getOneThought: RequestHandler = async (_req, res, next) => {
+  try {
+    const thought = await thoughtController.getOneThought();
+    res.json(thought);
+  } catch (error) {
+    next(error);
+  }
+};
 
 // POST to create a new thought
 // (don't forget to push the created thought's _id to the associated user's thoughts array field)
