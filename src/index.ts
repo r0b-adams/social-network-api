@@ -15,7 +15,8 @@ app.use(errorHandler);
 const connectDatabase = async () => {
   try {
     mongoose.set('strictQuery', false); // hide DeprecationWarning
-    await mongoose.connect(CONFIG.MONGODB_URI);
+    const db = await mongoose.connect(CONFIG.MONGODB_URI);
+    console.log(`connected to database ${db.connection.name}`);
   } catch (error) {
     console.error(error);
   }
