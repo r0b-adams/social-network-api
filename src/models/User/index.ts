@@ -1,21 +1,47 @@
-// User:
-  // username
-    // String
-    // Unique
-    // Required
-    // Trimmed
+import { Schema, model, Types } from 'mongoose';
+import { EMAIL_REGEX } from '../../utils';
 
-  // email
-    // String
-    // Required
-    // Unique
-    // Must match a valid email address (look into Mongoose's matching validation)
+interface IUser {
+  username: string;
+  email: string;
+  password: string;
+  thoughts: [Types.ObjectId];
+  friends: [Types.ObjectId];
+}
 
-  // thoughts
-    // Array of _id values referencing the Thought model
+const userSchema = new Schema<IUser>(
+  {
+    username: {
+      type: String,
+      required: true,
+      unique: true,
+      trim: true,
+    },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      match: [EMAIL_REGEX, 'must enter a valid email address'],
+    },
+    thoughts: [{ type: Schema.Types.ObjectId, ref: 'Thought' }],
+    friends: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+  },
+  {
+    id: false,
+    versionKey: false,
+    toJSON: {
+      virtuals: true,
+      getters: true,
+    },
+  },
+);
 
-  // friends
-    // Array of _id values referencing the User model (self-reference)
+userSchema.virtual('friend_count').get(function () {
+  return this.friends.length;
+});
 
-  // Schema Settings:
-    // Create a virtual called friendCount that retrieves the length of the user's friends array field on query.
+userSchema.virtual('thought_count').get(function () {
+  return this.thoughts.length;
+});
+
+export const User = model<IUser>('User', userSchema);
