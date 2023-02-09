@@ -1,6 +1,6 @@
-import { Schema } from "mongoose";
+import { Schema } from 'mongoose';
 
-interface IReaction {
+export interface IReaction {
   username: string;
   reaction_body: string;
   created_at: Date;
@@ -30,5 +30,5 @@ export const reactionSchema = new Schema<IReaction>(
       virtuals: true,
       getters: true,
     },
-  }
+  },
 );
