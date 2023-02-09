@@ -2,6 +2,7 @@ import { Schema, model, Types } from 'mongoose';
 import { EMAIL_REGEX } from '../../utils';
 
 interface IUser {
+  _id: string;
   username: string;
   email: string;
   password: string;
@@ -37,11 +38,11 @@ const userSchema = new Schema<IUser>(
 );
 
 userSchema.virtual('friend_count').get(function () {
-  return this.friends.length;
+  return this.friends?.length;
 });
 
 userSchema.virtual('thought_count').get(function () {
-  return this.thoughts.length;
+  return this.thoughts?.length;
 });
 
 export const User = model<IUser>('User', userSchema);
