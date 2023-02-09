@@ -1,5 +1,15 @@
 import { RequestHandler } from 'express';
+import { ParamsDictionary } from 'express-serve-static-core';
+
 import thoughtController from './ThoughtController';
+
+type IParams = ParamsDictionary;
+
+interface IThought {
+  user_id: string;
+  username: string;
+  thought_text: string;
+}
 
 export const getAllThoughts: RequestHandler = async (_req, res, next) => {
   try {
@@ -22,16 +32,9 @@ export const getOneThought: RequestHandler = async (req, res, next) => {
 
 // POST to create a new thought
 // (don't forget to push the created thought's _id to the associated user's thoughts array field)
-interface INewThought {
-  user_id: string;
-  username: string;
-  thought_text: string;
-}
-
-export const createThought: RequestHandler = async (req, res, next) => {
+export const createThought: RequestHandler<{}, {}, IThought> = async (req, res, next) => {
   try {
-    const { _id } = req.params;
-    const { user_id, username, thought_text } = req.body as INewThought;
+    const { user_id, username, thought_text } = req.body;
     const thought = await thoughtController.createThought(user_id, username, thought_text);
     res.json(thought);
   } catch (error) {
@@ -40,6 +43,16 @@ export const createThought: RequestHandler = async (req, res, next) => {
 };
 
 // PUT to update a thought by its _id
+export const updateThought: RequestHandler<IParams, {}, IThought> = async (req, res, next) => {
+  try {
+    const { _id } = req.params;
+    const { thought_text } = req.body;
+    const thought = await thoughtController.updateThought(_id, thought_text);
+    res.json(thought);
+  } catch (error) {
+    next(error);
+  }
+};
 
 // DELETE
 
