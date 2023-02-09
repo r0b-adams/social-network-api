@@ -1,7 +1,10 @@
 import { Schema, model } from 'mongoose';
 import { reactionSchema } from './Reaction';
 
-interface IThought {
+export { IReaction } from './Reaction';
+
+export interface IThought {
+  _id: string;
   username: string;
   thought_text: string;
   created_at: Date;
