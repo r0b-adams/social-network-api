@@ -1,5 +1,5 @@
-import { Schema, model } from "mongoose";
-import { reactionSchema } from "./Reaction";
+import { Schema, model } from 'mongoose';
+import { reactionSchema } from './Reaction';
 
 interface IThought {
   username: string;
@@ -34,7 +34,7 @@ const thoughtSchema = new Schema<IThought>(
       virtuals: true,
       getters: true,
     },
-  }
+  },
 );
 
-export const Thought = model<IThought>("Thought", thoughtSchema);
+export const Thought = model<IThought>('Thought', thoughtSchema);
