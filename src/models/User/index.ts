@@ -1,5 +1,5 @@
 import { Schema, model, Types } from 'mongoose';
-import { EMAIL_REGEX } from '../../utils';
+import { EMAIL_REGEX } from './helpers';
 
 interface IUser {
   _id: string;
