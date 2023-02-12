@@ -5,7 +5,7 @@ type HexTuple = [string, string, string];
 type RgbTuple = [number, number, number];
 
 // YYY, #YYY, YYYYYY, #YYYYYY
-const VALID_HEX = /(^#?[0-9A-F]{3}$)|(^#?[0-9A-F]{6}$)/gim;
+const VALID_HEX = /(^#?[0-9A-F]{3}$)|(^#?[0-9A-F]{6}$)/im;
 const validHex = (hex: string) => VALID_HEX.test(hex);
 
 // returns tuple of RGB ints from a hexadecimal color
