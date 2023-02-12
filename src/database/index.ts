@@ -51,7 +51,7 @@ const logger = (collectionName: string, methodName: string, methodArgs: string) 
       collectionName,
       FORMAT.RESET,
       `.`,
-      TEXT.AMBER,
+      TEXT.YELLOW,
       methodName,
       FORMAT.RESET,
       `(${args})`,
