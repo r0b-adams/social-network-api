@@ -1,5 +1,6 @@
 import { RequestHandler } from 'express';
 import userController from './UserController';
+import thoughtController from '../thought/ThoughtController';
 
 export const getAllUsers: RequestHandler = async (_req, res, next) => {
   try {
@@ -42,11 +43,13 @@ export const updateUser: RequestHandler = async (req, res, next) => {
 };
 
 export const deleteUser: RequestHandler = async (req, res, next) => {
-  // BONUS: Remove a user's associated thoughts when deleted.
   try {
     const { _id } = req.params;
-    const response = await userController.deleteUser(_id);
-    res.json(response);
+    const deleted_user = await userController.deleteUser(_id);
+    if (deleted_user) {
+      await thoughtController.deleteAllUserThoughts(deleted_user.username);
+    }
+    res.json({ deleted_user });
   } catch (error) {
     next(error);
   }
