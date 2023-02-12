@@ -21,7 +21,7 @@ morgan.format('request', (tokens, req, res) => {
       break;
     case METHOD.PUT:
     case METHOD.PATCH:
-      METHOD_COLOR = TEXT.YELLOW;
+      METHOD_COLOR = TEXT.ORANGE;
       break;
     case METHOD.DELETE:
       METHOD_COLOR = TEXT.RED;
@@ -38,7 +38,6 @@ morgan.format('request', (tokens, req, res) => {
   const output = [
     FORMAT.RESET,
     '\n',
-    TEXT.PURPLE,
     '[request] ',
     FORMAT.BOLD,
     METHOD_COLOR,
@@ -65,7 +64,6 @@ morgan.format('response', (tokens, req, res) => {
 
   const output = [
     FORMAT.RESET,
-    TEXT.DEEP_PURPLE,
     '[response] ',
     FORMAT.BOLD,
     STATUS_COLOR,
