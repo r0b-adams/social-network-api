@@ -11,61 +11,62 @@ class UserController {
     return await this.user.find().populate('friends', ['username', 'email']).populate('thoughts');
   }
 
-  async getOneUser(user_id: string) {
-    return await this.user.findById(user_id).populate('friends', ['username', 'email']).populate('thoughts');
+  async getOneUser(_id: string) {
+    return await this.user.findById(_id).populate('friends', ['username', 'email']).populate('thoughts');
   }
 
   async createUser(username: string, email: string) {
     return await this.user.create({ username, email });
   }
 
-  async updateUser(user_id: string, update: { username: string; email: string }) {
+  async updateUser(_id: string, update: { username: string; email: string }) {
     return await this.user
-      .findByIdAndUpdate(user_id, update, { new: true })
+      .findByIdAndUpdate(_id, update, { new: true })
       .populate('friends', ['username', 'email'])
       .populate('thoughts');
   }
 
-  async deleteUser(user_id: string) {
-    let update_result = null;
-    const deleted_user = await this.user.findByIdAndDelete(user_id);
-
+  // delete user and remove the deleted user's id from all friend arrays
+  async deleteUser(_id: string) {
+    const deleted_user = await this.user.findByIdAndDelete(_id);
     if (deleted_user) {
-      update_result = await this.user.updateMany(
-        { _id: { $in: deleted_user.friends } },
-        { $pull: { friends: user_id } },
-      );
+      await this.user.updateMany({ _id: { $in: deleted_user.friends } }, { $pull: { friends: deleted_user._id } });
     }
-
-    return { deleted_user, update_result };
+    return deleted_user;
   }
 
-  async addFriend(user_id: string, friend_id: string) {
-    // ids each added to the other user's friends
+  async addFriend(_id: string, friend_id: string) {
+    // ids each added to the other user's friends list
     const [user, friend] = await Promise.all([
       this.user
-        .findByIdAndUpdate(user_id, { $addToSet: { friends: friend_id } }, { new: true })
+        .findByIdAndUpdate(_id, { $addToSet: { friends: friend_id } }, { new: true })
         .populate('friends', ['username']),
       this.user
-        .findByIdAndUpdate(friend_id, { $addToSet: { friends: user_id } }, { new: true })
+        .findByIdAndUpdate(friend_id, { $addToSet: { friends: _id } }, { new: true })
         .populate('friends', ['username']),
     ]);
-
     return { user, friend };
   }
 
-  async removeFriend(user_id: string, friend_id: string) {
-    // ids each removed from the other user's friends
+  async removeFriend(_id: string, friend_id: string) {
+    // ids each removed from the other user's friends list
     const [user, friend] = await Promise.all([
       this.user
-        .findByIdAndUpdate(user_id, { $pull: { friends: friend_id } }, { new: true })
+        .findByIdAndUpdate(_id, { $pull: { friends: friend_id } }, { new: true })
         .populate('friends', ['username']),
       this.user
-        .findByIdAndUpdate(friend_id, { $pull: { friends: user_id } }, { new: true })
+        .findByIdAndUpdate(friend_id, { $pull: { friends: _id } }, { new: true })
         .populate('friends', ['username']),
     ]);
-
     return { user, friend };
+  }
+
+  async addThought(user_id: string, thought_id: string) {
+    return await this.user.findByIdAndUpdate(user_id, { $addToSet: { thoughts: thought_id } }, { new: true });
+  }
+
+  async removeThought(thought_id: string, username: string) {
+    return await this.user.updateOne({ username }, { $pull: { thoughts: thought_id } }, { new: true });
   }
 }
 
