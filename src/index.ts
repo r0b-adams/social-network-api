@@ -1,33 +1,28 @@
 import express from 'express';
-import mongoose from 'mongoose';
-
 import { CONFIG } from './config';
+import { connectDatabase } from './database';
+import { routesLogger } from './middleware';
 import { routes } from './routes';
-import { errorHandler } from './utils';
+import { errorHandler, FORMAT, TEXT } from './utils';
 
 const app = express();
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(routesLogger);
 app.use(routes);
 app.use(errorHandler);
 
-const connectDatabase = async () => {
+const startServer = async () => {
   try {
-    mongoose.set('strictQuery', false); // hide DeprecationWarning
-    const db = await mongoose.connect(CONFIG.MONGODB_URI);
-    console.log(`connected to database ${db.connection.name}`);
+    await connectDatabase();
+    app.listen(CONFIG.SERVER_PORT, () => {
+      const msg = [TEXT.LIGHT_BLUE, '[server] ', FORMAT.RESET, `listening on ${CONFIG.SERVER_PORT}`, '\n'].join('');
+      console.log(msg);
+    });
   } catch (error) {
     console.error(error);
   }
-};
-
-const startServer = async () => {
-  await connectDatabase();
-
-  app.listen(CONFIG.SERVER_PORT, () => {
-    console.log(`server listening on ${CONFIG.SERVER_PORT}`);
-  });
 };
 
 startServer();
