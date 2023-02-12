@@ -1,7 +1,7 @@
 import { RequestHandler } from 'express';
 import { ParamsDictionary } from 'express-serve-static-core';
-
 import { IThought, IReaction } from '../../../models/Thought';
+import userController from '../user/UserController';
 import thoughtController from './ThoughtController';
 
 // alias
@@ -29,8 +29,9 @@ export const getOneThought: RequestHandler = async (req, res, next) => {
 export const createThought: RequestHandler<{}, {}, IThought & { user_id: string }> = async (req, res, next) => {
   try {
     const { user_id, username, thought_text } = req.body;
-    const result = await thoughtController.createThought(user_id, username, thought_text);
-    res.json({ result });
+    const thought = await thoughtController.createThought(user_id, username, thought_text);
+    const user = await userController.addThought(user_id, thought._id);
+    res.json({ thought, user });
   } catch (error) {
     next(error);
   }
@@ -49,9 +50,13 @@ export const updateThought: RequestHandler<IParams, {}, IThought> = async (req, 
 
 export const deleteThought: RequestHandler = async (req, res, next) => {
   try {
+    let update = null;
     const { _id } = req.params;
-    const result = await thoughtController.deleteThought(_id);
-    res.json({ result });
+    const deleted_thought = await thoughtController.deleteThought(_id);
+    if (deleted_thought) {
+      update = await userController.removeThought(deleted_thought._id, deleted_thought.username);
+    }
+    res.json({ deleted_thought, update });
   } catch (error) {
     next(error);
   }
