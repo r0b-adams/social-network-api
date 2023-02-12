@@ -1,9 +1,10 @@
 import { Schema } from 'mongoose';
+import { formatDate } from '../../utils';
 
 export interface IReaction {
   username: string;
   reaction_body: string;
-  created_at: Date;
+  created_at: Date | string;
 }
 
 export const reactionSchema = new Schema<IReaction>(
@@ -15,12 +16,13 @@ export const reactionSchema = new Schema<IReaction>(
     reaction_body: {
       type: String,
       required: true,
-      // TODO: 280 character maximum
+      minlength: 1,
+      maxlength: 280,
     },
     created_at: {
       type: Date,
       default: Date.now,
-      // TODO:  Use a getter method to format the timestamp on query
+      get: formatDate,
     },
   },
   {
