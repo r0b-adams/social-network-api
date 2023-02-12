@@ -55,14 +55,14 @@ const logger = (collectionName: string, methodName: string, methodArgs: string) 
       methodName,
       FORMAT.RESET,
       `(${args})`,
-    ];
+    ].join('');
     const date = new Date().toLocaleString();
     mongooseStream.write(`${date}\n${msg}\n`, (error) => {
       if (error) {
         throw error;
       }
     });
-    console.log(colorized_msg.join(''));
+    console.log(colorized_msg);
   } catch (error) {
     console.log(error);
   }
