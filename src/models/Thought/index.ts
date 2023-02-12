@@ -1,13 +1,13 @@
 import { Schema, model } from 'mongoose';
 import { reactionSchema } from './Reaction';
+import { formatDate } from '../../utils';
 
 export { IReaction } from './Reaction';
-
 export interface IThought {
   _id: string;
   username: string;
   thought_text: string;
-  created_at: Date;
+  created_at: Date | string;
   reactions: [typeof reactionSchema];
 }
 
@@ -21,12 +21,13 @@ const thoughtSchema = new Schema<IThought>(
       type: String,
       required: true,
       trim: true,
-      // TODO: Must be between 1 and 280 characters
+      minLength: 1,
+      maxlength: 280,
     },
     created_at: {
       type: Date,
       default: Date.now,
-      // TODO: Use a getter method to format the timestamp on query
+      get: formatDate,
     },
     reactions: [reactionSchema],
   },
@@ -39,5 +40,9 @@ const thoughtSchema = new Schema<IThought>(
     },
   },
 );
+
+thoughtSchema.virtual('reaction_count').get(function () {
+  return this.reactions?.length;
+});
 
 export const Thought = model<IThought>('Thought', thoughtSchema);
