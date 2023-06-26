@@ -1,25 +1,30 @@
-import { Schema } from 'mongoose';
+import { Schema, Types } from 'mongoose';
 import { formatDate } from '../../utils';
 
 export interface IReaction {
+  reactionId: Schema.Types.ObjectId;
+  reactionBody: string;
   username: string;
-  reaction_body: string;
-  created_at: Date | string;
+  createdAt: Date | string;
 }
 
 export const reactionSchema = new Schema<IReaction>(
   {
-    username: {
-      type: String,
-      required: true,
+    reactionId: {
+      type: Schema.Types.ObjectId,
+      default: () => new Types.ObjectId(),
     },
-    reaction_body: {
+    reactionBody: {
       type: String,
       required: true,
       minlength: 1,
       maxlength: 280,
     },
-    created_at: {
+    username: {
+      type: String,
+      required: true,
+    },
+    createdAt: {
       type: Date,
       default: Date.now,
       get: formatDate,
@@ -27,9 +32,9 @@ export const reactionSchema = new Schema<IReaction>(
   },
   {
     id: false,
+    _id: false,
     versionKey: false,
     toJSON: {
-      virtuals: true,
       getters: true,
     },
   },
