@@ -1,11 +1,7 @@
 import { User } from '../../../models';
 
 class UserController {
-  private user;
-
-  constructor(user_model: typeof User) {
-    this.user = user_model;
-  }
+  private user = User;
 
   async getAllUsers() {
     return await this.user.find().populate('friends', ['username', 'email']).populate('thoughts');
@@ -70,4 +66,4 @@ class UserController {
   }
 }
 
-export default new UserController(User);
+export default new UserController();
