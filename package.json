@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc",
-    "start:dev": "nodemon --exec ts-node src/index.ts",
-    "start:prod": "node dist"
+    "dev": "nodemon --exec ts-node src/index.ts",
+    "prod": "node dist"
   },
   "repository": "git+https://github.com/r0b-adams/social-network-api.git",
   "keywords": [],
