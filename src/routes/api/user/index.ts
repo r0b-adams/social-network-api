@@ -10,10 +10,10 @@ const router = Router();
  */
 
 router.get('/', users.getAllUsers);
-router.get('/:_id', users.getOneUser);
+router.get('/:id', users.getOneUser);
 router.post('/', users.createUser);
-router.put('/:_id', users.updateUser);
-router.delete('/:_id', users.deleteUser);
-router.route('/:user_id/friends/:friend_id').post(users.addFriend).delete(users.removeFriend);
+router.put('/:id', users.updateUser);
+router.delete('/:id', users.deleteUser);
+router.route('/:userId/friends/:friendId').post(users.addFriend).delete(users.removeFriend);
 
 export { router as userRoutes };
