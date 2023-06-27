@@ -1,43 +1,39 @@
 import { Thought } from '../../../models';
 
 class ThoughtController {
-  private thought;
-
-  constructor(thought_model: typeof Thought) {
-    this.thought = thought_model;
-  }
+  private thought = Thought;
 
   async getAllThoughts() {
     return await this.thought.find().populate('reactions');
   }
 
-  async getOneThought(_id: string) {
-    return await this.thought.findById(_id);
+  async getOneThought(id: string) {
+    return await this.thought.findById(id);
   }
 
-  async createThought(user_id: string, username: string, thought_text: string) {
-    return await this.thought.create({ user_id, username, thought_text });
+  async createThought(userId: string, username: string, thoughtText: string) {
+    return await this.thought.create({ userId, username, thoughtText });
   }
 
-  async updateThought(_id: string, update: { thought_text: string }) {
-    return await this.thought.findByIdAndUpdate(_id, update, { new: true });
+  async updateThought(id: string, update: { thoughtText: string }) {
+    return await this.thought.findByIdAndUpdate(id, update, { new: true });
   }
 
-  async deleteThought(_id: string) {
-    return await this.thought.findByIdAndDelete(_id);
+  async deleteThought(id: string) {
+    return await this.thought.findByIdAndDelete(id);
   }
 
   async deleteAllUserThoughts(username: string) {
     return await this.thought.deleteMany({ username });
   }
 
-  async addReaction(_id: string, new_reaction: { username: string; reaction_body: string }) {
-    return await this.thought.findByIdAndUpdate(_id, { $push: { reactions: new_reaction } }, { new: true });
+  async addReaction(id: string, reaction: { username: string; reactionBody: string }) {
+    return await this.thought.findByIdAndUpdate(id, { $push: { reactions: reaction } }, { new: true });
   }
 
-  async removeReaction(_id: string, reaction_id: string) {
-    return await this.thought.findByIdAndUpdate(_id, { $pull: { reactions: { _id: reaction_id } } }, { new: true });
+  async removeReaction(id: string, reactionId: string) {
+    return await this.thought.findByIdAndUpdate(id, { $pull: { reactions: { reactionId } } }, { new: true });
   }
 }
 
-export default new ThoughtController(Thought);
+export default new ThoughtController();

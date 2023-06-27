@@ -10,11 +10,11 @@ const router = Router();
  */
 
 router.get('/', thoughts.getAllThoughts);
-router.get('/:_id', thoughts.getOneThought);
+router.get('/:id', thoughts.getOneThought);
 router.post('/', thoughts.createThought);
-router.put('/:_id', thoughts.updateThought);
-router.delete('/:_id', thoughts.deleteThought);
-router.post('/:thought_id/reactions', thoughts.addReaction);
-router.delete('/:thought_id/reactions/:reaction_id', thoughts.removeReaction);
+router.put('/:id', thoughts.updateThought);
+router.delete('/:id', thoughts.deleteThought);
+router.post('/:thoughtId/reactions', thoughts.addReaction);
+router.delete('/:thoughtId/reactions/:reactionId', thoughts.removeReaction);
 
 export { router as thoughtRoutes };
