@@ -1,5 +1,4 @@
 import { Schema, model, Types } from 'mongoose';
-import { EMAIL_REGEX } from './helpers';
 
 interface IUser {
   _id: string;
@@ -22,7 +21,7 @@ const userSchema = new Schema<IUser>(
       type: String,
       required: true,
       unique: true,
-      match: [EMAIL_REGEX, 'must enter a valid email address'],
+      match: [/^([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$/, 'must enter a valid email address'],
     },
     thoughts: [{ type: Schema.Types.ObjectId, ref: 'Thought' }],
     friends: [{ type: Schema.Types.ObjectId, ref: 'User' }],
@@ -37,11 +36,11 @@ const userSchema = new Schema<IUser>(
   },
 );
 
-userSchema.virtual('friend_count').get(function () {
+userSchema.virtual('friendCount').get(function () {
   return this.friends?.length;
 });
 
-userSchema.virtual('thought_count').get(function () {
+userSchema.virtual('thoughtCount').get(function () {
   return this.thoughts?.length;
 });
 
